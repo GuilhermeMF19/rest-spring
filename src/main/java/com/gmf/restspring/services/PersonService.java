@@ -7,8 +7,10 @@ import org.springframework.stereotype.Service;
 
 import com.gmf.restspring.exceptions.ResourceNotFoundException;
 import com.gmf.restspring.mapper.DozerMapper;
+import com.gmf.restspring.mapper.custom.PersonMapper;
 import com.gmf.restspring.model.Person;
 import com.gmf.restspring.data.vo.v1.PersonVO;
+import com.gmf.restspring.data.vo.v2.PersonVOV2;
 import com.gmf.restspring.repositories.PersonRepository;
 
 @Service
@@ -16,6 +18,9 @@ public class PersonService {
 
 	@Autowired
 	PersonRepository repository;
+
+	@Autowired
+	PersonMapper mapper;
 	
 	public List<PersonVO> findAll() {
 		return DozerMapper.parseListObject(repository.findAll(), PersonVO.class);
@@ -29,6 +34,12 @@ public class PersonService {
 	public PersonVO create(PersonVO person) {
 		var entity = DozerMapper.parseObject(person, Person.class);
 		var vo = DozerMapper.parseObject(repository.save(entity), PersonVO.class);
+		return vo;
+	}
+	
+	public PersonVOV2 createV2(PersonVOV2 person) {
+		var entity = mapper.convertVoToEntity(person);
+		var vo =  mapper.convertEntityToVo(repository.save(entity));
 		return vo;
 	}
 	
@@ -48,4 +59,5 @@ public class PersonService {
 		var entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
 		repository.delete(entity);
 	}
+
 }
