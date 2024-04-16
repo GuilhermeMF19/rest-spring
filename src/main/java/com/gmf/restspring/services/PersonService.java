@@ -7,6 +7,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import org.springframework.stereotype.Service;
 
+import com.gmf.restspring.exceptions.RequiredObjectIsNullException;
 import com.gmf.restspring.exceptions.ResourceNotFoundException;
 import com.gmf.restspring.mapper.DozerMapper;
 import com.gmf.restspring.model.Person;
@@ -36,6 +37,8 @@ public class PersonService {
 	}
 	
 	public PersonVO create(PersonVO person) {
+		if (person == null) throw new RequiredObjectIsNullException();
+		
 		var entity = DozerMapper.parseObject(person, Person.class);
 		var vo = DozerMapper.parseObject(repository.save(entity), PersonVO.class);
 		vo.add(linkTo(methodOn(PersonController.class).findById(vo.getKey())).withSelfRel());
@@ -43,6 +46,8 @@ public class PersonService {
 	}
 	
 	public PersonVO update(PersonVO person) {
+		if (person == null) throw new RequiredObjectIsNullException();
+		
 		var entity = repository.findById(person.getKey()).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
 		
 		entity.setFirstName(person.getFirstName());
