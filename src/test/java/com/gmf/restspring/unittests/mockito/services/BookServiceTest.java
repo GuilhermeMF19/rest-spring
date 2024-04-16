@@ -25,115 +25,73 @@ import com.gmf.restspring.unittests.mapper.mocks.MockBook;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-class BookServiceTest {
+class BookServicesTest {
 
 	MockBook input;
-	
+
 	@InjectMocks
 	private BookService service;
-	
+
 	@Mock
 	BookRepository repository;
-	
+
 	@BeforeEach
-	void setUp() throws Exception {
+	void setUpMocks() throws Exception {
 		input = new MockBook();
 		MockitoAnnotations.openMocks(this);
 	}
 
 	@Test
-	void testFindAll() {
-		List<Book> list = input.mockEntityList();
-		
-		when(repository.findAll()).thenReturn(list);
-		
-		var people = service.findAll();
-		
-		assertNotNull(people);
-		assertEquals(14, people.size());
-		
-		var personOne = people.get(1);
-		assertNotNull(personOne);
-		assertNotNull(personOne.getKey());
-		assertNotNull(personOne.getLinks());
-		
-		assertTrue(personOne.toString().contains("links: [</api/book/v1/1>;rel=\"self\"]"));
-		assertEquals("Addres Test1", personOne.getAuthor());
-		assertEquals("First Name Test1", personOne.getLaunchDate());
-		assertEquals("Last Name Test1", personOne.getPrice());
-		assertEquals("Female", personOne.getTitle());
-
-		var personFour = people.get(4);
-		assertNotNull(personFour);
-		assertNotNull(personFour.getKey());
-		assertNotNull(personFour.getLinks());
-		
-		assertTrue(personFour.toString().contains("links: [</api/book/v1/4>;rel=\"self\"]"));
-		assertEquals("Addres Test4", personFour.getAuthor());
-		assertEquals("First Name Test4", personFour.getLaunchDate());
-		assertEquals("Last Name Test4", personFour.getPrice());
-		assertEquals("Male", personFour.getTitle());
-		
-		var personSeven = people.get(7);
-		assertNotNull(personSeven);
-		assertNotNull(personSeven.getKey());
-		assertNotNull(personSeven.getLinks());
-		
-		assertTrue(personSeven.toString().contains("links: [</api/book/v1/7>;rel=\"self\"]"));
-		assertEquals("Addres Test7", personSeven.getAuthor());
-		assertEquals("First Name Test7", personSeven.getLaunchDate());
-		assertEquals("Last Name Test7", personSeven.getPrice());
-		assertEquals("Female", personSeven.getTitle());
-	}
-
-	@Test
 	void testFindById() {
-		Book entity = input.mockEntity(1); 
+		Book entity = input.mockEntity(1);
 		entity.setId(1L);
-		
+
 		when(repository.findById(1L)).thenReturn(Optional.of(entity));
-		
+
 		var result = service.findById(1L);
 		assertNotNull(result);
 		assertNotNull(result.getKey());
 		assertNotNull(result.getLinks());
-		
+
 		assertTrue(result.toString().contains("links: [</api/book/v1/1>;rel=\"self\"]"));
-		assertEquals("Addres Test1", result.getAuthor());
-		assertEquals("First Name Test1", result.getLaunchDate());
-		assertEquals("Last Name Test1", result.getPrice());
-		assertEquals("Female", result.getTitle());
+		assertEquals("Some Author1", result.getAuthor());
+		assertEquals("Some Title1", result.getTitle());
+		assertEquals(25D, result.getPrice());
+		assertNotNull(result.getLaunchDate());
 	}
 
 	@Test
 	void testCreate() {
-		Book entity = input.mockEntity(1); 
+		Book entity = input.mockEntity(1);
+		entity.setId(1L);
+
 		Book persisted = entity;
 		persisted.setId(1L);
-		
+
 		BookVO vo = input.mockVO(1);
 		vo.setKey(1L);
-		
+
 		when(repository.save(entity)).thenReturn(persisted);
-		
+
 		var result = service.create(vo);
+
 		assertNotNull(result);
 		assertNotNull(result.getKey());
 		assertNotNull(result.getLinks());
-		
+
 		assertTrue(result.toString().contains("links: [</api/book/v1/1>;rel=\"self\"]"));
-		assertEquals("Addres Test1", result.getAuthor());
-		assertEquals("First Name Test1", result.getLaunchDate());
-		assertEquals("Last Name Test1", result.getPrice());
-		assertEquals("Female", result.getTitle());
+		assertEquals("Some Author1", result.getAuthor());
+		assertEquals("Some Title1", result.getTitle());
+		assertEquals(25D, result.getPrice());
+		assertNotNull(result.getLaunchDate());
 	}
 
 	@Test
-	void testCreateWithNullPerson() {
+	void testCreateWithNullBook() {
 		Exception exception = assertThrows(RequiredObjectIsNullException.class, () -> {
 			service.create(null);
 		});
-		
+
 		String expectedMessage = "It is not allowed to persist a null object!";
 		String actualMessage = exception.getMessage();
 
@@ -142,36 +100,36 @@ class BookServiceTest {
 
 	@Test
 	void testUpdate() {
-		Book entity = input.mockEntity(1); 
-		entity.setId(1L);
-		
+		Book entity = input.mockEntity(1);
+
 		Book persisted = entity;
 		persisted.setId(1L);
-		
+
 		BookVO vo = input.mockVO(1);
 		vo.setKey(1L);
-		
+
 		when(repository.findById(1L)).thenReturn(Optional.of(entity));
 		when(repository.save(entity)).thenReturn(persisted);
-		
+
 		var result = service.update(vo);
+
 		assertNotNull(result);
 		assertNotNull(result.getKey());
 		assertNotNull(result.getLinks());
-		
+
 		assertTrue(result.toString().contains("links: [</api/book/v1/1>;rel=\"self\"]"));
-		assertEquals("Addres Test1", result.getAuthor());
-		assertEquals("First Name Test1", result.getLaunchDate());
-		assertEquals("Last Name Test1", result.getPrice());
-		assertEquals("Female", result.getTitle());
+		assertEquals("Some Author1", result.getAuthor());
+		assertEquals("Some Title1", result.getTitle());
+		assertEquals(25D, result.getPrice());
+		assertNotNull(result.getLaunchDate());
 	}
-	
+
 	@Test
-	void testUpdateWithNullPerson() {
+	void testUpdateWithNullBook() {
 		Exception exception = assertThrows(RequiredObjectIsNullException.class, () -> {
 			service.update(null);
 		});
-		
+
 		String expectedMessage = "It is not allowed to persist a null object!";
 		String actualMessage = exception.getMessage();
 
@@ -180,12 +138,60 @@ class BookServiceTest {
 
 	@Test
 	void testDelete() {
-		Book entity = input.mockEntity(1); 
+		Book entity = input.mockEntity(1);
 		entity.setId(1L);
-		
+
 		when(repository.findById(1L)).thenReturn(Optional.of(entity));
-		
+
 		service.delete(1L);
+	}
+
+	@Test
+	void testFindAll() {
+		List<Book> list = input.mockEntityList();
+
+		when(repository.findAll()).thenReturn(list);
+
+		var people = service.findAll();
+
+		assertNotNull(people);
+		assertEquals(14, people.size());
+
+		var bookOne = people.get(1);
+
+		assertNotNull(bookOne);
+		assertNotNull(bookOne.getKey());
+		assertNotNull(bookOne.getLinks());
+
+		assertTrue(bookOne.toString().contains("links: [</api/book/v1/1>;rel=\"self\"]"));
+		assertEquals("Some Author1", bookOne.getAuthor());
+		assertEquals("Some Title1", bookOne.getTitle());
+		assertEquals(25D, bookOne.getPrice());
+		assertNotNull(bookOne.getLaunchDate());
+
+		var bookFour = people.get(4);
+
+		assertNotNull(bookFour);
+		assertNotNull(bookFour.getKey());
+		assertNotNull(bookFour.getLinks());
+
+		assertTrue(bookFour.toString().contains("links: [</api/book/v1/4>;rel=\"self\"]"));
+		assertEquals("Some Author4", bookFour.getAuthor());
+		assertEquals("Some Title4", bookFour.getTitle());
+		assertEquals(25D, bookFour.getPrice());
+		assertNotNull(bookFour.getLaunchDate());
+
+		var bookSeven = people.get(7);
+
+		assertNotNull(bookSeven);
+		assertNotNull(bookSeven.getKey());
+		assertNotNull(bookSeven.getLinks());
+
+		assertTrue(bookSeven.toString().contains("links: [</api/book/v1/7>;rel=\"self\"]"));
+		assertEquals("Some Author7", bookSeven.getAuthor());
+		assertEquals("Some Title7", bookSeven.getTitle());
+		assertEquals(25D, bookSeven.getPrice());
+		assertNotNull(bookSeven.getLaunchDate());
 	}
 
 }
