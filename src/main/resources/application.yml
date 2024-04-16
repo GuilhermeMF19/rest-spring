@@ -14,3 +14,7 @@ spring:
     show-sql: false
   application:
     name: rest-spring
+springdoc:
+  pathsToMatch: /api/**/v1/**
+  swagger-ui:
+    use-root-path: true
