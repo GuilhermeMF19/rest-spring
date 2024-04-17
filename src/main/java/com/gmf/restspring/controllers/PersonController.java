@@ -71,7 +71,7 @@ public class PersonController {
 	public PersonVO findById(@PathVariable Long id) {
 		return service.findById(id);
 	}
-	
+
 	@PostMapping(
 			produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
 			consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
