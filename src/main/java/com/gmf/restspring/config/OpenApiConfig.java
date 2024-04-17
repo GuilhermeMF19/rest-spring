@@ -13,13 +13,15 @@ public class OpenApiConfig {
 	@Bean
 	public OpenAPI customOpenAPI() {
 		return new OpenAPI()
-				.info(new Info()
-						.title("RESTful API with Java 21 and Spring Boot 3")
-						.version("v1")
-						.description("Creating API RESTful in course to increase my knowledge.")
-						.termsOfService("https://restSpring.com.br/teste-api")
-						.license(new License()
-								.name("Apache 2.0")
-								.url("https://restSpring.com.br/teste-api")));
-	}
+			.info(new Info()
+				.title("RESTful API with Java 21 and Spring Boot 3")
+				.version("v1")
+				.description("Creating API RESTful in course to increase my knowledge.")
+				.termsOfService("https://restSpring.com.br/teste-api")
+				.license(new License()
+					.name("Apache 2.0")
+					.url("https://restSpring.com.br/teste-api")
+					)
+				);
+}
 }
