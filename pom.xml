@@ -19,6 +19,7 @@
 		<mysql.version>8.0.33</mysql.version>
 		<dozer.version>6.4.0</dozer.version>
 		<springdoc.version>2.5.0</springdoc.version>
+		<java-jwt.version>4.4.0</java-jwt.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -32,6 +33,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.auth0</groupId>
+			<artifactId>java-jwt</artifactId>
+			<version>${java-jwt.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.hateoas</groupId>
