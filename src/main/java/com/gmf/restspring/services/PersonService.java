@@ -15,6 +15,8 @@ import com.gmf.restspring.controllers.PersonController;
 import com.gmf.restspring.data.vo.v1.PersonVO;
 import com.gmf.restspring.repositories.PersonRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class PersonService {
 
@@ -57,6 +59,15 @@ public class PersonService {
 		
 		var vo = DozerMapper.parseObject(repository.save(entity), PersonVO.class);
 		vo.add(linkTo(methodOn(PersonController.class).findById(vo.getKey())).withSelfRel());
+		return vo;
+	}
+	
+	@Transactional
+	public PersonVO disablePerson(Long id) {
+		repository.disablePerson(id);
+		var entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));;
+		var vo = DozerMapper.parseObject(entity, PersonVO.class);
+		vo.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
 		return vo;
 	}
 	
